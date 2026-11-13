@@ -146,11 +146,12 @@ pub fn menu_items(
     if page > 0 {
         items[PREV_SLOT] = button("minecraft:arrow");
     }
-    items[INFO_SLOT] = {
-        let mut stack = button("minecraft:paper").expect("paper is a vanilla item");
+    // No page button rather than a panic if the game lacks paper: this runs
+    // in a server hook, where a panic would take the whole server down.
+    if let Some(mut stack) = button("minecraft:paper") {
         stack.count = (page + 1).min(99) as u32;
-        Some(stack)
-    };
+        items[INFO_SLOT] = Some(stack);
+    }
     if page < last {
         items[NEXT_SLOT] = button("minecraft:spectral_arrow");
     }

@@ -69,6 +69,18 @@ fn is_known_container(block: &str) -> bool {
     ) || path.ends_with("shulker_box")
 }
 
+/// The slot a container's own saved tag numbers, in the container the game
+/// sees. A double chest is one container whose view numbers the right half's
+/// 27 slots first, so a slot read from the left half's tag sits 27 later; a
+/// single chest or any other container keeps its slots as they are.
+fn view_slot(half: Option<&str>, slot: usize) -> usize {
+    if half == Some("left") {
+        slot + 27
+    } else {
+        slot
+    }
+}
+
 fn offset(pos: [i32; 3], face: Direction) -> [i32; 3] {
     let (dx, dy, dz) = match face {
         Direction::Down => (0, -1, 0),
@@ -191,6 +203,7 @@ pub fn take(
             if model::key(stack) != key {
                 continue;
             }
+            let slot = view_slot(host.block_property(pos, "type").as_deref(), slot);
             for face in FACES {
                 let Some(got) = host.extract_item(dimension, pos, face, slot, left) else {
                     continue;
@@ -247,6 +260,14 @@ mod tests {
         assert!(!is_cable("minecraft:chest"));
         assert!(is_terminal("toms_storage:storage_terminal"));
         assert!(!is_terminal("toms_storage:inventory_cable"));
+    }
+
+    #[test]
+    fn a_double_chest_left_half_is_27_slots_later_in_the_view() {
+        assert_eq!(view_slot(None, 3), 3);
+        assert_eq!(view_slot(Some("single"), 3), 3);
+        assert_eq!(view_slot(Some("right"), 3), 3);
+        assert_eq!(view_slot(Some("left"), 3), 30);
     }
 
     #[test]

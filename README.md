@@ -55,7 +55,9 @@ real stored one (its components and damage included).
   and the search bar above it, which filters on the server and re-sends the menu.
 - Taking (left click a stack, right click one, never more than the room in your inventory) and storing
   (shift-click a slot of your inventory), both on the server, both moving the real stacks through
-  Horizon's container helpers. Leftovers go back into the network.
+  Horizon's container helpers. Leftovers go back into the network. A double chest is read half by
+  half, and a slot of its left half is mapped to the 27 slots later the game's shared chest view
+  numbers it, so a click takes the item it showed.
 - A network cut by the block or container limit says so in chat when the terminal opens, instead of
   silently showing a part of it.
 - The menu keeps itself up to date: once a second (`server_tick`, every 20 ticks) an open terminal
@@ -64,7 +66,7 @@ real stored one (its components and damage included).
 - One `.hnmod` and one `.hmod` for client and dedicated server (`side = "both"`): a client without the
   native half can still open the terminal as a plain chest menu (no search box), and a client with
   different content is refused when it joins, as any content mod's.
-- 15 unit tests of the list, the search, the paging and the network helpers; the mod builds and passes
+- 16 unit tests of the list, the search, the paging and the network helpers; the mod builds and passes
   its tests on the Horizon commit it pins.
 
 ## Missing
