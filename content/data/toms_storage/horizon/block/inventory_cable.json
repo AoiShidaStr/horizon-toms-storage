@@ -1,0 +1,12 @@
+{
+  "template": "minecraft:chorus_plant",
+  "connects_to": "#toms_storage:cable",
+  "thickness": 4,
+  "properties": {
+    "hardness": 0.5,
+    "explosion_resistance": 1.0,
+    "sounds": "minecraft:copper_block",
+    "requires_tool": false
+  },
+  "item": true
+}

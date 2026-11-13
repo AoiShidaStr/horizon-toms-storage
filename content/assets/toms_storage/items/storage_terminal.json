@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "toms_storage:block/storage_terminal"
+  }
+}

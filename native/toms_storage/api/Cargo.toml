@@ -1,0 +1,12 @@
+[package]
+name = "mod-toms_storage"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "toms_storage"
+path = "src/lib.rs"
+
+[dependencies]
+# The launcher points this at the Horizon source it builds the game from.
+horizon-client = { git = "https://github.com/horizon-rust/horizon", rev = "a85af177a82504f357ff10d5d40d0b7230e2ac32" }

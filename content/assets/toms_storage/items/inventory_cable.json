@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "toms_storage:block/inventory_cable_core"
+  }
+}

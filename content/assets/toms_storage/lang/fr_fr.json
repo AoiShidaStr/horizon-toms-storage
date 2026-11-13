@@ -1,0 +1,11 @@
+{
+  "block.toms_storage.storage_terminal": "Terminal de stockage",
+  "block.toms_storage.inventory_connector": "Connecteur d'inventaire",
+  "block.toms_storage.inventory_cable": "Câble d'inventaire",
+  "itemGroup.toms_storage.storage": "Tom's Simple Storage",
+  "toms_storage.terminal.search": "Rechercher",
+  "toms_storage.terminal.hint": "Tapez pour rechercher",
+  "toms_storage.terminal.no_link": "Aucun inventaire relié",
+  "toms_storage.terminal.page": "Page %s",
+  "toms_storage.terminal.count": "%sx"
+}

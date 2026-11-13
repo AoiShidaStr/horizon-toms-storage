@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "SIS",
+    "SSS"
+  ],
+  "key": {
+    "S": "minecraft:stone",
+    "I": "minecraft:iron_ingot"
+  },
+  "result": {
+    "id": "toms_storage:inventory_connector",
+    "count": 4
+  }
+}

@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""Draw this mod's textures, 16x16 each, all original.
+
+Tom's Simple Storage's own art is not used: these are plain copper-and-stone
+tiles drawn here with PIL, so the mod may be redistributed under MIT.
+
+Run: python tools/gen_textures.py
+"""
+import os
+import random
+
+from PIL import Image, ImageDraw
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.join(os.path.dirname(HERE), "content", "assets", "toms_storage", "textures", "block")
+
+
+def noise(img, base, spread, seed):
+    rnd = random.Random(seed)
+    px = img.load()
+    for y in range(16):
+        for x in range(16):
+            d = rnd.randint(-spread, spread)
+            px[x, y] = tuple(max(0, min(255, c + d)) for c in base) + (255,)
+
+
+def frame(d, rect, fill, outline):
+    d.rectangle(rect, fill=fill, outline=outline)
+
+
+def terminal_side():
+    img = Image.new("RGBA", (16, 16))
+    noise(img, (74, 78, 84), 10, 11)
+    d = ImageDraw.Draw(img)
+    # Copper rim around a dark screen with three green rows of "items".
+    frame(d, (1, 1, 14, 14), None, (176, 116, 63))
+    frame(d, (2, 3, 13, 11), (24, 30, 34), (120, 78, 44))
+    rnd = random.Random(7)
+    for row in range(3):
+        y = 4 + row * 3
+        for col in range(4):
+            x = 3 + col * 3
+            if rnd.random() < 0.8:
+                d.rectangle([x, y, x + 1, y + 1], fill=(96, 200, 140))
+    d.rectangle([4, 12, 11, 13], fill=(52, 56, 62), outline=(120, 78, 44))
+    return img
+
+
+def terminal_top():
+    img = Image.new("RGBA", (16, 16))
+    noise(img, (88, 92, 98), 8, 12)
+    d = ImageDraw.Draw(img)
+    frame(d, (0, 0, 15, 15), None, (60, 64, 70))
+    d.rectangle([2, 2, 13, 13], fill=(104, 108, 114), outline=(176, 116, 63))
+    d.rectangle([6, 6, 9, 9], fill=(70, 74, 80), outline=(120, 78, 44))
+    return img
+
+
+def terminal_bottom():
+    img = Image.new("RGBA", (16, 16))
+    noise(img, (66, 70, 76), 8, 13)
+    d = ImageDraw.Draw(img)
+    frame(d, (0, 0, 15, 15), None, (48, 52, 58))
+    for i in range(0, 16, 4):
+        d.line([(i, 0), (i, 15)], fill=(58, 62, 68))
+        d.line([(0, i), (15, i)], fill=(58, 62, 68))
+    return img
+
+
+def connector():
+    img = Image.new("RGBA", (16, 16))
+    noise(img, (150, 100, 56), 12, 21)
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, 15, 15], outline=(96, 62, 34))
+    # Rivets on the corners of the 8px body.
+    for x, y in ((3, 3), (12, 3), (3, 12), (12, 12)):
+        d.point((x, y), fill=(214, 160, 96))
+    d.rectangle([5, 5, 10, 10], fill=(176, 116, 63), outline=(96, 62, 34))
+    return img
+
+
+def cable():
+    img = Image.new("RGBA", (16, 16))
+    noise(img, (176, 116, 63), 14, 22)
+    d = ImageDraw.Draw(img)
+    for y in (0, 15):
+        d.line([(0, y), (15, y)], fill=(120, 78, 44))
+    d.line([(0, 7), (15, 7)], fill=(206, 148, 88))
+    d.line([(0, 8), (15, 8)], fill=(140, 92, 52))
+    return img
+
+
+def main():
+    os.makedirs(OUT, exist_ok=True)
+    for name, img in (
+        ("storage_terminal_side", terminal_side()),
+        ("storage_terminal_top", terminal_top()),
+        ("storage_terminal_bottom", terminal_bottom()),
+        ("inventory_connector", connector()),
+        ("inventory_cable", cable()),
+    ):
+        path = os.path.join(OUT, name + ".png")
+        img.save(path)
+        print(os.path.relpath(path, os.path.dirname(HERE)), img.size)
+
+
+if __name__ == "__main__":
+    main()

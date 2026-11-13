@@ -1,0 +1,21 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "toms_storage:block/inventory_connector",
+    "connector": "toms_storage:block/inventory_connector"
+  },
+  "elements": [
+    {
+      "from": [4, 4, 4],
+      "to": [12, 12, 12],
+      "faces": {
+        "north": { "texture": "#connector", "uv": [4, 4, 12, 12] },
+        "east": { "texture": "#connector", "uv": [4, 4, 12, 12] },
+        "south": { "texture": "#connector", "uv": [4, 4, 12, 12] },
+        "west": { "texture": "#connector", "uv": [4, 4, 12, 12] },
+        "up": { "texture": "#connector", "uv": [4, 4, 12, 12] },
+        "down": { "texture": "#connector", "uv": [4, 4, 12, 12] }
+      }
+    }
+  ]
+}

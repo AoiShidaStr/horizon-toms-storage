@@ -1,0 +1,8 @@
+id = "toms_storage"
+name = "Tom's Simple Storage"
+version = "0.1.0"
+description = "A storage terminal and its connectors: right-click the terminal to see every item of the linked chests in one searchable menu. A clean-room Horizon port of Tom's Simple Storage (idea only; all code and art are original)."
+authors = ["Tom's Simple Storage by TomTheDeveloper (idea)", "Horizon port by the Saison 2 server"]
+api = "0.2"
+side = "both"
+capabilities = ["registries"]
