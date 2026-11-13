@@ -41,12 +41,22 @@ impl Entry {
     }
 }
 
+/// The line a stack belongs to: its canonical form (`canon_stack`) with the
+/// count set to one. `canon_stack` is `ItemStack.CODEC`, which carries the
+/// count, so without this the same item in two chests would be two lines
+/// whenever its counts differ.
+pub fn key(stack: &ItemStack) -> String {
+    let mut one = stack.clone();
+    one.count = 1;
+    canon_stack(Some(&one))
+}
+
 /// Sums what the containers hold by item, in the order the containers and
 /// their slots come: the terminal lists a network the way it is filled.
 ///
-/// Two stacks are one line when their canonical form matches (`canon_stack`),
-/// so a named or enchanted item keeps its own line as in vanilla's inventory
-/// sorting.
+/// Two stacks are one line when [`key`] matches, so a named or enchanted item
+/// keeps its own line as in vanilla's inventory sorting while the same plain
+/// item in three chests is one line.
 pub fn aggregate(containers: &[Vec<Option<ItemStack>>]) -> Vec<Entry> {
     let mut out: Vec<Entry> = Vec::new();
     let mut seen: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
@@ -55,13 +65,13 @@ pub fn aggregate(containers: &[Vec<Option<ItemStack>>]) -> Vec<Entry> {
             if stack.count == 0 {
                 continue;
             }
-            let key = canon_stack(Some(stack));
-            match seen.get(&key) {
+            let line = key(stack);
+            match seen.get(&line) {
                 Some(&i) => out[i].total = out[i].total.saturating_add(stack.count),
                 None => {
-                    seen.insert(key.clone(), out.len());
+                    seen.insert(line.clone(), out.len());
                     out.push(Entry {
-                        key,
+                        key: line,
                         stack: stack.clone(),
                         total: stack.count,
                     });
@@ -210,6 +220,19 @@ mod tests {
         assert_eq!(entries[0].total, 76);
         assert_eq!(entries[1].item(), "minecraft:dirt");
         assert_eq!(entries[1].total, 3);
+    }
+
+    #[test]
+    fn the_line_key_ignores_the_count_but_not_the_components() {
+        let plain = stack("minecraft:stone", 64);
+        let fewer = stack("minecraft:stone", 3);
+        assert_eq!(key(&plain), key(&fewer));
+        let named = parse_stack(
+            "{id:\"minecraft:stone\",count:64,components:{\"minecraft:custom_name\":\"Rock\"}}",
+        )
+        .expect("parses")
+        .expect("not air");
+        assert_ne!(key(&plain), key(&named));
     }
 
     #[test]

@@ -64,7 +64,7 @@ real stored one (its components and damage included).
 - One `.hnmod` and one `.hmod` for client and dedicated server (`side = "both"`): a client without the
   native half can still open the terminal as a plain chest menu (no search box), and a client with
   different content is refused when it joins, as any content mod's.
-- 12 unit tests of the list, the search, the paging and the network helpers; the mod builds and passes
+- 15 unit tests of the list, the search, the paging and the network helpers; the mod builds and passes
   its tests on the Horizon commit it pins.
 
 ## Missing

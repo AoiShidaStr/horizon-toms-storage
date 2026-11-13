@@ -14,6 +14,8 @@ use std::collections::{HashSet, VecDeque};
 use horizon_client::mod_api::{Direction, Host, ItemStack};
 use horizon_client::save::decode_items;
 
+use crate::model;
+
 /// The id the terminal block has in the content half.
 pub const TERMINAL: &str = "toms_storage:storage_terminal";
 /// The blocks a network walks through.
@@ -186,7 +188,7 @@ pub fn take(
                 break 'containers;
             }
             let Some(stack) = stack else { continue };
-            if horizon_client::item_data::canon_stack(Some(stack)) != key {
+            if model::key(stack) != key {
                 continue;
             }
             for face in FACES {
