@@ -56,6 +56,11 @@ real stored one (its components and damage included).
 - Taking (left click a stack, right click one, never more than the room in your inventory) and storing
   (shift-click a slot of your inventory), both on the server, both moving the real stacks through
   Horizon's container helpers. Leftovers go back into the network.
+- A network cut by the block or container limit says so in chat when the terminal opens, instead of
+  silently showing a part of it.
+- The menu keeps itself up to date: once a second (`server_tick`, every 20 ticks) an open terminal
+  re-reads its network and re-sends its menu only when the items changed, so a chest filled by a
+  hopper or another player appears on its own. An unchanged network sends nothing.
 - One `.hnmod` and one `.hmod` for client and dedicated server (`side = "both"`): a client without the
   native half can still open the terminal as a plain chest menu (no search box), and a client with
   different content is refused when it joins, as any content mod's.
@@ -66,10 +71,6 @@ real stored one (its components and damage included).
 
 - **Crafting terminal, open crate, wireless terminal, filtered connector, inventory hopper/interface,
   level emitter, trims and paint kits**: not ported. Only the plain terminal, connector and cable.
-- **The menu does not refresh by itself**: it is rebuilt when you click, search or open it. A chest
-  filled by a hopper or another player while the menu is open shows its new items at your next click,
-  not at once. There is no tick hook rebuilding it every tick (`native_set_menu_items` on a timer would
-  be re-sent to the client each time, so it is left to an action).
 - **Search finds item ids only**: not display names, tooltips, mod names, tags, or an item you have
   never seen. No tabs, no filters, no sort modes.
 - **The search box is only on a Horizon client**: it is drawn over the menu by the native half. A stock
@@ -80,7 +81,7 @@ real stored one (its components and damage included).
   `links` menu type does show real linked slots, but such a menu cannot be searched or summed, which is
   what this mod is for.
 - **Limits**: 512 network blocks, 64 containers, 64 slots read per container (a double chest's half is
-  27), 45 lines a page. A bigger network is cut off silently (not reported in chat).
+  27), 45 lines a page. A bigger network is cut off, and the terminal says so in chat when it opens.
 - **A container's own rules decide what it gives**: a furnace's fuel comes out of its bottom, its
   output only from the front, and a mod container only from its `outputs` faces; the terminal tries
   every side, so what a hopper could not take, it cannot take either.

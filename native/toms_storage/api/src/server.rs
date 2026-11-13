@@ -20,6 +20,11 @@ use crate::world;
 /// server clears it with when a terminal opens.
 pub const QUERY_CHANNEL: &str = "toms_storage:query";
 
+/// How often an open terminal re-reads its network, in server ticks: once a
+/// second, enough for a hopper or another player to show up without a click
+/// while keeping the walk cheap on a busy server.
+const REFRESH_TICKS: u64 = 20;
+
 /// One player's open terminal: the network it found, what it holds, and the
 /// search and page showing.
 struct Session {
@@ -86,12 +91,22 @@ fn render(host: &mut dyn Host, uuid: u128, session: &Session) {
 /// Opens the terminal at `pos` for `uuid`: its network, its items, its menu.
 pub fn open(host: &mut dyn Host, uuid: u128, pos: [i32; 3]) -> Flow {
     let dimension = host.dimension().to_string();
-    let containers = world::scan(host, &dimension, pos);
+    let scan = world::scan(host, &dimension, pos);
+    let containers = scan.containers;
     trace(&format!(
-        "open at {:?} in {dimension}: {} container(s)",
+        "open at {:?} in {dimension}: {} container(s){}",
         pos,
-        containers.len()
+        containers.len(),
+        if scan.truncated { ", cut by a limit" } else { "" }
     ));
+    if scan.truncated {
+        host.tell(
+            uuid,
+            Text::literal(
+                "Storage Terminal: network too big, some containers are not shown (max 512 blocks, 64 containers)",
+            ),
+        );
+    }
     if containers.is_empty() {
         host.tell(
             uuid,
@@ -249,6 +264,38 @@ pub fn search(host: &mut dyn Host, uuid: u128, query: &str) {
     rebuild(host, &mut session);
     render(host, uuid, &session);
     put(uuid, session);
+}
+
+/// The server tick: once a second, every open terminal re-reads its network and
+/// re-sends its menu only when what it holds changed. A chest filled by a
+/// hopper or another player then appears on its own, and a menu nobody touched
+/// costs nothing on the wire until its items differ.
+pub fn tick(host: &mut dyn Host, tick: u64, world_running: bool) {
+    if !world_running || tick % REFRESH_TICKS != 0 {
+        return;
+    }
+    let uuids: Vec<u128> = match sessions().as_ref() {
+        Some(map) => map.keys().copied().collect(),
+        None => return,
+    };
+    for uuid in uuids {
+        let Some(mut session) = take(uuid) else {
+            continue;
+        };
+        let entries = model::aggregate(&world::read_all(
+            host,
+            &session.dimension,
+            &session.containers,
+        ));
+        if entries != session.entries {
+            trace(&format!("refresh: {} line(s) of items", entries.len()));
+            session.entries = entries;
+            session.matched = model::filter(&session.entries, &session.query);
+            session.page = model::clamp_page(session.page, session.matched.len());
+            render(host, uuid, &session);
+        }
+        put(uuid, session);
+    }
 }
 
 /// The menu closed: forget the session, so a later click is nobody's.

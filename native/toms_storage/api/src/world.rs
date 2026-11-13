@@ -100,10 +100,19 @@ pub fn read_slots(
     Some(decode_items(Some(items), MAX_SLOTS))
 }
 
+/// What a terminal's walk found: the containers, in the order the walk finds
+/// them, and whether a limit stopped it from finding more (so the player can be
+/// told instead of silently seeing a partial network).
+pub struct Scan {
+    pub containers: Vec<[i32; 3]>,
+    pub truncated: bool,
+}
+
 /// Every container the terminal at `origin` links to, in the order the walk
 /// finds them.
-pub fn scan(host: &mut dyn Host, dimension: &str, origin: [i32; 3]) -> Vec<[i32; 3]> {
+pub fn scan(host: &mut dyn Host, dimension: &str, origin: [i32; 3]) -> Scan {
     let mut containers: Vec<[i32; 3]> = Vec::new();
+    let mut truncated = false;
     let mut seen_blocks: HashSet<[i32; 3]> = HashSet::new();
     let mut seen_containers: HashSet<[i32; 3]> = HashSet::new();
     let mut queue: VecDeque<[i32; 3]> = VecDeque::new();
@@ -120,19 +129,28 @@ pub fn scan(host: &mut dyn Host, dimension: &str, origin: [i32; 3]) -> Vec<[i32;
                 if seen_blocks.len() < MAX_BLOCKS {
                     seen_blocks.insert(next);
                     queue.push_back(next);
+                } else {
+                    truncated = true;
                 }
                 continue;
             }
             if block == "minecraft:air" || block == "minecraft:cave_air" || block == "minecraft:void_air" {
                 continue;
             }
-            if containers.len() < MAX_CONTAINERS && is_container(host, dimension, next) {
-                seen_containers.insert(next);
-                containers.push(next);
+            if is_container(host, dimension, next) {
+                if containers.len() < MAX_CONTAINERS {
+                    seen_containers.insert(next);
+                    containers.push(next);
+                } else {
+                    truncated = true;
+                }
             }
         }
     }
-    containers
+    Scan {
+        containers,
+        truncated,
+    }
 }
 
 /// What the containers hold, one list of slots each.

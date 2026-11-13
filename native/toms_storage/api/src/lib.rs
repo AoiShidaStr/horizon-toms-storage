@@ -18,7 +18,7 @@ mod server;
 use horizon_client::mod_api::{
     ClientTickPostEvent, Flow, Hooks, Host, MenuClickedEvent, MenuClosedEvent, NetFromClientEvent,
     NetFromServerEvent, RightClickBlockEvent, ScreenCharTypedPreEvent, ScreenClosingEvent,
-    ScreenKeyPressedPreEvent, ScreenRenderPostEvent,
+    ScreenKeyPressedPreEvent, ScreenRenderPostEvent, ServerTickEvent, ServerTickPhase,
 };
 
 pub fn hooks() -> Box<dyn Hooks> {
@@ -48,6 +48,14 @@ impl Hooks for Mod {
 
     fn menu_closed(&self, _host: &mut dyn Host, event: &mut MenuClosedEvent) {
         server::closed(event.uuid);
+    }
+
+    /// Once a second, an open terminal re-reads its network, so items a hopper
+    /// or another player put in a linked chest appear without a click.
+    fn server_tick(&self, host: &mut dyn Host, event: &mut ServerTickEvent<'_>) {
+        if let ServerTickPhase::ServerTickStart { world_running } = event.phase {
+            server::tick(host, event.context.tick.get(), world_running);
+        }
     }
 
     /// The search box's text, from our own client half.
