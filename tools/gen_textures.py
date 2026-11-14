@@ -98,46 +98,6 @@ def crafting_top():
     return img
 
 
-def crate_side():
-    img = Image.new("RGBA", (16, 16))
-    noise(img, (150, 110, 64), 10, 41)
-    d = ImageDraw.Draw(img)
-    # Vertical planks with a copper band top and bottom, and a gap between two.
-    for x in (0, 5, 10, 15):
-        d.line([(x, 0), (x, 15)], fill=(104, 74, 42))
-    d.line([(4, 0), (4, 15)], fill=(186, 140, 86))
-    d.line([(9, 0), (9, 15)], fill=(186, 140, 86))
-    d.rectangle([0, 0, 15, 2], fill=(176, 116, 63), outline=(120, 78, 44))
-    d.rectangle([0, 13, 15, 15], fill=(176, 116, 63), outline=(120, 78, 44))
-    d.point((2, 7), fill=(214, 160, 96))
-    d.point((12, 7), fill=(214, 160, 96))
-    return img
-
-
-def crate_top():
-    img = Image.new("RGBA", (16, 16))
-    noise(img, (150, 110, 64), 10, 42)
-    d = ImageDraw.Draw(img)
-    frame(d, (0, 0, 15, 15), None, (104, 74, 42))
-    # Open: an empty dark inside, the rim of the crate around it.
-    d.rectangle([2, 2, 13, 13], fill=(30, 24, 20), outline=(120, 78, 44))
-    d.line([(2, 2), (13, 2)], fill=(186, 140, 86))
-    d.line([(2, 3), (13, 3)], fill=(120, 86, 50))
-    d.rectangle([0, 0, 1, 15], fill=(176, 116, 63))
-    d.rectangle([14, 0, 15, 15], fill=(176, 116, 63))
-    return img
-
-
-def crate_bottom():
-    img = Image.new("RGBA", (16, 16))
-    noise(img, (140, 102, 58), 10, 43)
-    d = ImageDraw.Draw(img)
-    frame(d, (0, 0, 15, 15), None, (96, 68, 38))
-    for i in range(0, 16, 5):
-        d.line([(i, 0), (i, 15)], fill=(104, 74, 42))
-    return img
-
-
 def connector():
     img = Image.new("RGBA", (16, 16))
     noise(img, (150, 100, 56), 12, 21)
@@ -170,9 +130,6 @@ def main():
         ("crafting_terminal_side", crafting_side()),
         ("crafting_terminal_top", crafting_top()),
         ("crafting_terminal_bottom", terminal_bottom()),
-        ("open_crate_side", crate_side()),
-        ("open_crate_top", crate_top()),
-        ("open_crate_bottom", crate_bottom()),
         ("inventory_connector", connector()),
         ("inventory_cable", cable()),
     ):

@@ -53,7 +53,10 @@ for i in $(seq 1 240); do grep -q "Done (" $LOG && break; grep -q "engine exited
 echo "[smoke] server up after ${i}s" >> $LOG
 
 # Beside the terminal: a connector, then a chest holding stone and diamonds.
+# The spawn chunk is forced loaded first, so the setblocks land on a live chunk.
 cmd "gamerule respawn_radius 0"
+cmd "forceload add -1 -1 3 3"
+sleep 2
 cmd "setblock 3 -60 0 toms_storage:storage_terminal"
 cmd "setblock 4 -60 0 toms_storage:inventory_connector"
 cmd "setblock 5 -60 0 minecraft:chest"

@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "top": "toms_storage:block/open_crate_top",
-    "bottom": "toms_storage:block/open_crate_bottom",
-    "side": "toms_storage:block/open_crate_side"
-  }
-}
