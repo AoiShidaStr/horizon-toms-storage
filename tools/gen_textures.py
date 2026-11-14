@@ -67,37 +67,6 @@ def terminal_bottom():
     return img
 
 
-def crafting_side():
-    img = Image.new("RGBA", (16, 16))
-    noise(img, (74, 78, 84), 10, 31)
-    d = ImageDraw.Draw(img)
-    # The terminal's copper rim, with a small 3x3 grid where the screen is.
-    frame(d, (1, 1, 14, 14), None, (176, 116, 63))
-    frame(d, (2, 3, 13, 12), (44, 34, 26), (120, 78, 44))
-    for i in range(3):
-        for j in range(3):
-            x = 3 + i * 4
-            y = 4 + j * 3
-            d.rectangle([x, y, x + 2, y + 1], fill=(160, 112, 66), outline=(96, 62, 34))
-    return img
-
-
-def crafting_top():
-    img = Image.new("RGBA", (16, 16))
-    noise(img, (88, 92, 98), 8, 32)
-    d = ImageDraw.Draw(img)
-    frame(d, (0, 0, 15, 15), None, (60, 64, 70))
-    # A flat 3x3 crafting grid cut into the top.
-    d.rectangle([1, 1, 14, 14], fill=(104, 108, 114), outline=(176, 116, 63))
-    d.rectangle([2, 2, 13, 13], fill=(70, 52, 38), outline=(120, 78, 44))
-    for i in (1, 2):
-        x = 2 + i * 4
-        y = 2 + i * 4
-        d.line([(x, 2), (x, 13)], fill=(120, 78, 44))
-        d.line([(2, y), (13, y)], fill=(120, 78, 44))
-    return img
-
-
 def connector():
     img = Image.new("RGBA", (16, 16))
     noise(img, (150, 100, 56), 12, 21)
@@ -127,9 +96,6 @@ def main():
         ("storage_terminal_side", terminal_side()),
         ("storage_terminal_top", terminal_top()),
         ("storage_terminal_bottom", terminal_bottom()),
-        ("crafting_terminal_side", crafting_side()),
-        ("crafting_terminal_top", crafting_top()),
-        ("crafting_terminal_bottom", terminal_bottom()),
         ("inventory_connector", connector()),
         ("inventory_cable", cable()),
     ):

@@ -37,7 +37,10 @@ impl Hooks for Mod {
         let Some(player) = host.acting_player() else {
             return Flow::Continue;
         };
-        server::open(host, player.uuid, event.pos)
+        // Opened at the next server tick: a player's hook runs with the server
+        // out of the game's hands, and a menu cannot be opened there.
+        server::request_open(player.uuid, event.pos);
+        Flow::Cancel
     }
 
     /// Every click in that menu: a line takes its item, the arrows turn the
@@ -45,6 +48,7 @@ impl Hooks for Mod {
     fn menu_clicked(&self, host: &mut dyn Host, event: &mut MenuClickedEvent) {
         server::click(host, event.uuid, event.slot, event.button, event.mode);
     }
+
 
     fn menu_closed(&self, _host: &mut dyn Host, event: &mut MenuClosedEvent) {
         server::closed(event.uuid);

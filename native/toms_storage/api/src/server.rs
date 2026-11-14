@@ -38,6 +38,23 @@ struct Session {
 
 static SESSIONS: Mutex<Option<HashMap<u128, Session>>> = Mutex::new(None);
 
+/// Players who right-clicked a terminal since the last server tick. The menu
+/// cannot be opened inside that click: `native_open_menu` needs the server in
+/// hand, and a player's hook runs with it taken out (`as_guest`), so it would
+/// answer None. The tick opens it, before the world moves.
+static PENDING: Mutex<Option<Vec<(u128, [i32; 3])>>> = Mutex::new(None);
+
+/// A terminal was right-clicked: open it at the next tick's start.
+pub fn request_open(uuid: u128, pos: [i32; 3]) {
+    let mut pending = PENDING
+        .lock()
+        .unwrap_or_else(|poison| poison.into_inner());
+    let pending = pending.get_or_insert_with(Vec::new);
+    if !pending.iter().any(|open| open.0 == uuid) {
+        pending.push((uuid, pos));
+    }
+}
+
 fn sessions() -> MutexGuard<'static, Option<HashMap<u128, Session>>> {
     SESSIONS.lock().unwrap_or_else(|poison| poison.into_inner())
 }
@@ -127,12 +144,12 @@ pub fn open(host: &mut dyn Host, uuid: u128, pos: [i32; 3]) -> Flow {
         let host: &dyn Host = host;
         model::menu_items(&entries, &matched, 0, |item| max_stack(host, item))
     };
-    if host
-        .open_menu(uuid, model::ROWS, Text::literal(model::TITLE), items)
-        .is_none()
-    {
+    let Some(window) = host.open_menu(uuid, model::ROWS, Text::literal(model::TITLE), items)
+    else {
+        trace("open: the game did not open the menu");
         return Flow::Cancel;
-    }
+    };
+    trace(&format!("open: menu window {window}"));
     // A fresh terminal starts with an empty search box.
     let _ = host.net_send_to_player(uuid, QUERY_CHANNEL, b"");
     put(
@@ -277,7 +294,21 @@ pub fn search(host: &mut dyn Host, uuid: u128, query: &str) {
 /// hopper or another player then appears on its own, and a menu nobody touched
 /// costs nothing on the wire until its items differ.
 pub fn tick(host: &mut dyn Host, tick: u64, world_running: bool) {
-    if !world_running || tick % REFRESH_TICKS != 0 {
+    if !world_running {
+        return;
+    }
+    // The terminals a player right-clicked since the last tick, now that the
+    // menu helpers have the server in hand.
+    let pending: Vec<(u128, [i32; 3])> = {
+        let mut pending = PENDING
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner());
+        pending.take().unwrap_or_default()
+    };
+    for (uuid, pos) in pending {
+        open(host, uuid, pos);
+    }
+    if tick % REFRESH_TICKS != 0 {
         return;
     }
     let uuids: Vec<u128> = match sessions().as_ref() {

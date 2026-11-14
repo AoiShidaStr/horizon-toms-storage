@@ -1,6 +1,5 @@
 {
   "block.toms_storage.storage_terminal": "Storage Terminal",
-  "block.toms_storage.crafting_terminal": "Crafting Terminal",
   "block.toms_storage.inventory_connector": "Inventory Connector",
   "block.toms_storage.inventory_cable": "Inventory Cable",
   "itemGroup.toms_storage.storage": "Tom's Simple Storage",

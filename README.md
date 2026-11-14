@@ -14,7 +14,7 @@ The idea and the block names come from it; **all code, models, textures and name
 
 | Part | Folder | File | What it is |
 |---|---|---|---|
-| Content | `content/` | `toms_storage.hmod` | the two terminals, the connector and the cable, their models, textures, loot, recipes, names and creative tab. No code. |
+| Content | `content/` | `toms_storage.hmod` | the terminal, the connector and the cable, their models, textures, loot, recipes, names and creative tab. No code. |
 | Native | `native/toms_storage/` | `toms_storage.hnmod` | the terminal itself: the network walk, the list, the search, the clicks. A Horizon **trait mod** (`[api]`), so nothing of Horizon's source is patched. |
 
 The content mod alone gives decorative blocks; the native mod alone does nothing (its hooks never fire
@@ -45,10 +45,6 @@ real stored one (its components and damage included).
 - The terminal block, the inventory connector and the inventory cable, with models that join along the
   six directions (`connects_to` on the chorus-plant template), original textures, loot, recipes, English
   and French names, a creative tab, and `minecraft:mineable/pickaxe`.
-- A **crafting terminal** (the terminal's shell with a 3x3 grid cut into its top): a `crafting_table`
-  template under our own id, model and texture, so right click opens the vanilla 3x3 crafting grid
-  wherever a player puts one. It has a recipe (a crafting table and a storage terminal), loot, English
-  and French names, a creative-tab entry and original textures, so it is not a creative-only prop.
 - The network walk: the terminal, every cable and connector joined to it up to 512 blocks, and up to
   64 containers beside them. A container is any block whose block entity saves an `Items` list (plus
   the containers that may leave it out while empty, such as a shulker box).
@@ -75,18 +71,18 @@ real stored one (its components and damage included).
 
 ## Missing
 
-- **Crafting from the network**: the crafting terminal opens the vanilla 3x3 grid in its own shell; it
-  does not pull its ingredients out of the network, and it is not a network terminal itself. Real
-  network crafting (as the original does) is not ported.
-- **The open crate has a menu**: the original's crate is a GUI-less container hoppers fill; this one is a
-  27-slot container that opens the barrel menu as well as joining the network. The behaviour players use
-  it for (put things in, have the terminal show them) works.
+- **The crafting terminal**: not ported. A content block copies its template's states, model and shapes
+  but not its behaviour: a `crafting_table`-templated block is a plain block, so right click never opens
+  the 3x3 grid. A real one needs a mod menu type with a `crafting` grid (`data/<id>/horizon/menu/`), a
+  native block entity to hold the grid, and a `native_screen` to draw it on a Horizon client; none of
+  that is here. One was added last session and removed again once it was proved inert.
+- **Crafting from the network**: the original crafts out of the network. Not ported.
 - **Open crate**: tried and dropped. A content block keeps its vanilla template's states and shapes but
   gets no block entity, so a barrel-templated crate registered but held nothing and the network could
   not read it; a real crate needs a native block with its own container, which this port does not have
   yet. Do not add it back as a decorative block.
 - **Wireless terminal, filtered connector, inventory hopper/interface, level emitter, trims and paint
-  kits**: not ported. Four block types now: storage terminal, crafting terminal, connector, cable.
+  kits**: not ported. Three block types now: storage terminal, connector, cable.
 - **Search finds item ids only**: not display names, tooltips, mod names, tags, or an item you have
   never seen. No tabs, no filters, no sort modes.
 - **The search box is only on a Horizon client**: it is drawn over the menu by the native half. A stock

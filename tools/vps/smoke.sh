@@ -89,24 +89,6 @@ cmd "data get entity Store0 Inventory"
 cmd "data get block 5 -60 0 Items"
 sleep 10
 
-echo "[smoke] ===== run C: only an open crate in the network" >> $LOG
-# The crate takes the chest's place, so the terminal's only container is the
-# new block; a click must reach the emerald inside it.
-cmd "kill @e[type=minecraft:item]"
-cmd "setblock 5 -60 0 toms_storage:open_crate"
-cmd "setblock 6 -60 0 toms_storage:crafting_terminal"
-sleep 1
-cmd "item replace block 5 -60 0 container.0 with minecraft:emerald 5"
-cmd "data get block 5 -60 0 Items"
-sleep 1
-$BOTS --server 127.0.0.1:$PORT --bots 1 --behaviour idle --height 0 --ground --seconds 14 \
-  --name Crate --click 3,-60,0:0:0:0 --report $S/bots-c.json > $S/bots-c.log 2>&1 &
-for i in $(seq 1 80); do grep -q "Crate0 joined" $LOG && break; sleep 0.25; done
-sleep 10
-cmd "data get entity Crate0 Inventory"
-cmd "data get block 5 -60 0 Items"
-sleep 4
-
 cmd "list"
 cmd "stop"
 for i in $(seq 1 60); do grep -q "engine exited" $LOG && break; sleep 1; done
