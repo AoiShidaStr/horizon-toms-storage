@@ -1,11 +1,14 @@
 {
   "block.toms_storage.storage_terminal": "Storage Terminal",
+  "block.toms_storage.crafting_terminal": "Crafting Terminal",
   "block.toms_storage.inventory_connector": "Inventory Connector",
   "block.toms_storage.inventory_cable": "Inventory Cable",
+  "block.toms_storage.open_crate": "Open Crate",
   "itemGroup.toms_storage.storage": "Tom's Simple Storage",
   "toms_storage.terminal.search": "Search",
   "toms_storage.terminal.hint": "Type to search",
-  "toms_storage.terminal.no_link": "No inventory linked",
+  "toms_storage.terminal.no_link": "Storage Terminal: no inventory linked",
+  "toms_storage.terminal.too_big": "Storage Terminal: network too big, some containers are not shown (max 512 blocks, 64 containers)",
   "toms_storage.terminal.page": "Page %s",
   "toms_storage.terminal.count": "%sx"
 }

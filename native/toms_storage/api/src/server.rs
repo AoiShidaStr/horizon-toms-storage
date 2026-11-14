@@ -102,15 +102,21 @@ pub fn open(host: &mut dyn Host, uuid: u128, pos: [i32; 3]) -> Flow {
     if scan.truncated {
         host.tell(
             uuid,
-            Text::literal(
+            Text::translate_with_fallback(
+                "toms_storage.terminal.too_big",
                 "Storage Terminal: network too big, some containers are not shown (max 512 blocks, 64 containers)",
+                &[],
             ),
         );
     }
     if containers.is_empty() {
         host.tell(
             uuid,
-            Text::literal("Storage Terminal: no inventory linked"),
+            Text::translate_with_fallback(
+                "toms_storage.terminal.no_link",
+                "Storage Terminal: no inventory linked",
+                &[],
+            ),
         );
         return Flow::Cancel;
     }

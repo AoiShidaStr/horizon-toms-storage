@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "toms_storage:block/open_crate"
+    }
+  }
+}

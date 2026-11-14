@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "toms_storage:block/crafting_terminal_top",
+    "bottom": "toms_storage:block/crafting_terminal_bottom",
+    "side": "toms_storage:block/crafting_terminal_side"
+  }
+}

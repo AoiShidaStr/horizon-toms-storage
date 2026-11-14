@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CS"
+  ],
+  "key": {
+    "C": "minecraft:crafting_table",
+    "S": "toms_storage:storage_terminal"
+  },
+  "result": {
+    "id": "toms_storage:crafting_terminal",
+    "count": 1
+  }
+}

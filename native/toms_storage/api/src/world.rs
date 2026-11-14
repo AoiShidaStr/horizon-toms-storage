@@ -18,6 +18,9 @@ use crate::model;
 
 /// The id the terminal block has in the content half.
 pub const TERMINAL: &str = "toms_storage:storage_terminal";
+/// The content half's open crate: a container of ours, whose block entity is a
+/// barrel's, so it may save no `Items` while empty like a shulker box does.
+pub const OPEN_CRATE: &str = "toms_storage:open_crate";
 /// The blocks a network walks through.
 pub const CABLE_BLOCKS: [&str; 3] = [
     "toms_storage:storage_terminal",
@@ -52,6 +55,9 @@ pub fn is_terminal(block: &str) -> bool {
 /// Container blocks whose block entity may save no `Items` while empty (a
 /// shulker box does not), so a link to one is kept and simply shows nothing.
 fn is_known_container(block: &str) -> bool {
+    if block == OPEN_CRATE {
+        return true;
+    }
     let path = block.strip_prefix("minecraft:").unwrap_or(block);
     matches!(
         path,
@@ -278,5 +284,8 @@ mod tests {
         assert!(is_known_container("othermod:big_shulker_box"));
         assert!(!is_known_container("minecraft:stone"));
         assert!(!is_known_container("toms_storage:inventory_cable"));
+        // Our own container, a barrel under the hood, is found even while
+        // empty (its block entity may leave the list out).
+        assert!(is_known_container("toms_storage:open_crate"));
     }
 }
