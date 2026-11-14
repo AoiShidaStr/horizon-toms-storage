@@ -70,7 +70,9 @@ real stored one (its components and damage included).
   the native half's: without it the terminal is a block that does nothing (a content block gets no block
   entity and no menu). A client with different content is refused when it joins, as any content mod's.
 - 16 unit tests of the list, the search, the paging and the network helpers; the mod builds and passes
-  its tests on the Horizon commit it pins.
+  its tests on the Horizon commit it pins. `tools/vps/smoke.sh` runs it on a headless dedicated server:
+  a bot right-clicks the terminal, its click takes 64 stone out of the chest, and a shift-click puts 32
+  gold into it (the `Test failed` line there is the "no item was dropped" probe).
 
 ## Missing
 
