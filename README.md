@@ -45,6 +45,9 @@ real stored one (its components and damage included).
 - The terminal block, the inventory connector and the inventory cable, with models that join along the
   six directions (`connects_to` on the chorus-plant template), original textures, loot, recipes, English
   and French names, a creative tab, and `minecraft:mineable/pickaxe`.
+- Right-clicking the terminal opens its menu at the next server tick: a player's block hook runs with the
+  server out of the game's hands, where `native_open_menu` refuses, so the open is queued and done at the
+  tick's start.
 - The network walk: the terminal, every cable and connector joined to it up to 512 blocks, and up to
   64 containers beside them. A container is any block whose block entity saves an `Items` list (plus
   the containers that may leave it out while empty, such as a shulker box).
@@ -63,9 +66,9 @@ real stored one (its components and damage included).
 - The menu keeps itself up to date: once a second (`server_tick`, every 20 ticks) an open terminal
   re-reads its network and re-sends its menu only when the items changed, so a chest filled by a
   hopper or another player appears on its own. An unchanged network sends nothing.
-- One `.hnmod` and one `.hmod` for client and dedicated server (`side = "both"`): a client without the
-  native half can still open the terminal as a plain chest menu (no search box), and a client with
-  different content is refused when it joins, as any content mod's.
+- One `.hnmod` and one `.hmod` for client and dedicated server (`side = "both"`). The terminal's menu is
+  the native half's: without it the terminal is a block that does nothing (a content block gets no block
+  entity and no menu). A client with different content is refused when it joins, as any content mod's.
 - 16 unit tests of the list, the search, the paging and the network helpers; the mod builds and passes
   its tests on the Horizon commit it pins.
 
